@@ -3,7 +3,6 @@ import {
     Text,
     Platform,
     View,
-    TextInput,
     TouchableOpacity,
 } from 'react-native'
 import {
@@ -113,6 +112,7 @@ export default class App extends Component {
         this.createNewNote = this.createNewNote.bind(this)
         this.changeMode = this.changeMode.bind(this)
         this.onFilterFavorites = this.onFilterFavorites.bind(this)
+        this.onPressActionButton = this.onPressActionButton.bind(this)
     }
 
     componentWillMount() {
@@ -308,6 +308,14 @@ export default class App extends Component {
         })
     }
 
+    onPressActionButton() {
+        if(this.state.mode === 0) {
+          this.createNewNote('', true)
+        } else if (this.state.mode === 1) {
+          this.refs.dropboxNoteList.createNewNote()
+        }
+    }
+
     render() {
         const { noteList, mode, filterFavorites, isNoteOpen, fileName, content } = this.state
         return (
@@ -338,45 +346,36 @@ export default class App extends Component {
                             {/* <Icon name='md-search' style={styles.headerRightMenuButton}/> */}
                         </Right>
                     </Header>
-                    <Content contentContainerStyle={{ display: 'flex' }}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', width: '100%', height: 40, backgroundColor: '#F3F4F4'}}>
+                  {
+                    mode === 0 ? <Content contentContainerStyle={{ display: 'flex' }}>
+                        <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', width: '100%', height: 40, backgroundColor: '#F3F4F4'}}>
                             <Text style={{backgroundColor: 'transparent', position: 'absolute', left: 10, top:12, color: 'rgba(40,44,52,0.4)', fontSize: 13, fontWeight: '600'}}>
-                                {
-                                    mode === 0
-                                        ? 'All Notes'
-                                        : 'Dropbox'
-                                }
+                                All Notes
                             </Text>
-                            {/*<View style={{backgroundColor: 'transparent', position: 'absolute', right: 10, marginTop: 11}}>
-                                <Text style={{color: 'rgba(40,44,52,0.4)', fontSize: 13, fontWeight: '600'}}>Sort by Created  <Icon name='md-flash' style={{color: '#FDC134', fontSize: 14, fontWeight: '600'}} /></Text>
-                            </View>*/}
                         </View>
                         {
-                            mode === 0 ? noteList.map((note) => {
+                            noteList.map((note) => {
                                 if (filterFavorites &&  !note.isStarred) return null
                                 return <NoteListItem note={note} onStarPress={this.onStarPress} onNotePress={this.setNoteModalIsOpen} key={note.fileName} />
-                            }) : <DropboxNoteList/>
+                            })
                         }
-                    </Content>
-                    {
-                        mode === 0 ?
-                            <View>
-                                <Button
-                                    transparent
-                                    onPress={() => this.createNewNote('', true)}
-                                    style={styles.newPostButtonWrap}>
-                                    <View style={styles.newPostButton}>
-                                        <Icon name='md-create' style={{color: "#fff"}}/>
-                                    </View>
-                                </Button>
-                                <NoteModal setIsOpen={this.setNoteModalIsOpen}
-                                       isNoteOpen={isNoteOpen}
-                                       fileName={fileName}
-                                       content={content}/>
-                            </View>
-                        : null
-                    }
+                    </Content> : <DropboxNoteList ref='dropboxNoteList'/>
+                  }
                 </Container>
+                <View>
+                    <Button
+                      transparent
+                      onPress={() => this.onPressActionButton()}
+                      style={styles.newPostButtonWrap}>
+                        <View style={styles.newPostButton}>
+                            <Icon name='md-create' style={{color: "#fff"}}/>
+                        </View>
+                    </Button>
+                    <NoteModal setIsOpen={this.setNoteModalIsOpen}
+                               isNoteOpen={isNoteOpen}
+                               fileName={fileName}
+                               content={content}/>
+                </View>
             </Drawer>
         )
     }
