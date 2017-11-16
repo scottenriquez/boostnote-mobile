@@ -21,7 +21,7 @@ import {
 import DropboxNoteList from './views/DropboxNoteList'
 
 import SideBar from './components/SideBar'
-import NoteModal from './views/NoteModal'
+import NoteModal from './views/note/NoteModal'
 import NoteListItem from './components/NoteList/NoteListItem'
 
 import AwsMobileAnalyticsConfig from './lib/AwsMobileAnalytics'
@@ -55,13 +55,13 @@ const styles = {
         marginRight: 30
     },
     headerRightMenuButton: {
-        color: 'rgba(255, 255, 255, 0.4)',
+        color: '#FED530',
         fontSize: 21,
-        marginRight: 20
+        marginRight: 6
     },
     newPostButtonWrap: {
         position: 'absolute',
-        marginLeft: '43%',
+        right: 30,
         bottom: 30,
         width: 60,
         height: 60,
@@ -98,6 +98,10 @@ export default class App extends Component {
             content: '',
             filterFavorites: false,
         }
+
+        // Init AwsMobileAnalytics
+        AwsMobileAnalyticsConfig.initAwsMobileAnalytics();
+
         this.openDrawer = this.openDrawer.bind(this)
         this.closeDrawer = this.closeDrawer.bind(this)
         this.setNoteModalIsOpen = this.setNoteModalIsOpen.bind(this)
@@ -175,7 +179,7 @@ export default class App extends Component {
 
                 })
         } else {
-            AwsMobileAnalyticsConfig.recordDynamitCustomEvent('EDIT_NOTE')
+            AwsMobileAnalyticsConfig.recordDynamicCustomEvent('EDIT_NOTE')
             this.listFilesAndSetState()
             this.setState({
                 isNoteOpen: false
@@ -291,7 +295,7 @@ export default class App extends Component {
                 console.table(contentObject.note)
                 fs.writeFile(`${dirs.DocumentDir}/Boostnote/boostnote.json`, JSON.stringify(contentObject), 'utf8')
                     .catch(err => console.log(err))
-                AwsMobileAnalyticsConfig.recordDynamitCustomEvent('CREATE_NOTE')
+                AwsMobileAnalyticsConfig.recordDynamicCustomEvent('CREATE_NOTE')
             })
             .catch((err) => {
                 console.log(err)
